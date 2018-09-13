@@ -1,0 +1,27 @@
+.row{
+    margin-top: 15px;
+}
+.logo{
+    margin-left: 5%;
+    margin-top: 2%;
+}
+@media screen and (max-width: 600px) {
+
+    body{
+        font-size: 30px;
+    }
+
+    button{
+        font-size: 30px;
+
+    }
+    
+    table{
+        font-size: 25px;
+    }
+
+    .container {
+        width: 100%; 
+    }
+
+}

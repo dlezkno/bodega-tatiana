@@ -1,0 +1,319 @@
+<html lang="es">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js?cache=658s"></script>
+        <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+        <script src="js/angular.min.js"></script>
+        <script src="js/sweetalert.min.js"></script>
+        <link rel="stylesheet" href="css/sweetalert.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/normalize.css">
+        <script src="dist/js/standalone/selectize.js"></script>
+        <script src="js/index.js"></script>
+    </head>
+    <body ng-app="app" ng-controller="MainController">
+        <header>
+            <div class="logo">
+                <img src="img/logo.jpg"/>
+            </div>
+        </header>
+        <div class="container">
+            <!--/////////////////////////////////// MODAL VENTA ////////////////////////////////////////////////////////////-->
+            <div class="row">
+                <div class="modal fade" id="modalVenta" role="dialog">
+                    <div class="modal-dialog">                    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Agregar nueva venta</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form ng-submit="addSale();" >
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <select id="referencia_combo" class="demo-default" placeholder="Referencia" ng-model="sale.ref" ng-options="item.referencia for item in products">
+                                                <option value="" disabled>Referencia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">    
+                                        <div class="col-sm-12">
+                                            <input type="text" pattern="[a-zA-Z0-9]+" class="form-control" ng-model="sale.fact" placeholder="N Factura" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">    
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" placeholder="Vendido a" ng-model="sale.vendido" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" id="ref_text" placeholder="Unidades" ng-model="sale.unidades" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <input type="date" class="form-control" placeholder="fecha" ng-model="sale.fecha" id="fecha" required>
+                                        </div>  
+                                    </div>
+                                    <div class="row">  
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btnCustom text-center">GUARDAR</button>
+                                        </div> 
+                                    </div>  
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                            <!--<button type="button" class="btn btn-secondary btn-lg" ng-click="add();">Agregar</button>-->
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+            <!--/////////////////////////////////// FIN MODAL VENTA /////////////////////////////////////////////////////////-->
+            <!--/////////////////////////////////// MODAL BODEGA ////////////////////////////////////////////////////////////-->
+            <div class="row">
+                <div class="modal fade" id="modalBodega" role="dialog">
+                    <div class="modal-dialog">                    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Agregar nuevo producto</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form ng-submit="addProduct();" >
+                                    <div class="row">    
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" placeholder="Referencia" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" class="form-control" placeholder="Cantidad" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">  
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btnCustom text-center">GUARDAR</button>
+                                        </div> 
+                                    </div> 
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+            <!--/////////////////////////////////// FIN MODAL BODEGA //////////////////////////////////////////////////////////-->
+            <!--/////////////////////////////////// MODAL UPDATE BODEGA ///////////////////////////////////////////////////////-->
+            <div class="row">
+                <div class="modal fade" id="modalUpdateBodega" role="dialog">
+                    <div class="modal-dialog">                    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Editar producto</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form ng-submit="updateProductCellar();" >
+                                    <div class="row">    
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" ng-model="product.referencia" placeholder="Referencia" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" ng-model="product.cantidad" class="form-control" placeholder="Cantidad" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">  
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btnCustom text-center">EDITAR</button>
+                                        </div> 
+                                    </div> 
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+            <!--/////////////////////////////////// MODAL FIN MODAL BODEGA ////////////////////////////////////////////////////-->
+
+
+
+            <!--/////////////////////////////////// MODAL UPDATE VENTA ////////////////////////////////////////////////////////////-->
+            <div class="row">
+                <div class="modal fade" id="modalVenta" role="dialog">
+                    <div class="modal-dialog">                    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Agregar nueva venta</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form ng-submit="addSale();" >
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <select id="referencia_combo" class="demo-default" placeholder="Referencia" ng-model="sale.ref" ng-options="item.referencia for item in products">
+                                                <option value="" disabled>Referencia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">    
+                                        <div class="col-sm-12">
+                                            <input type="text" pattern="[a-zA-Z0-9]+" class="form-control" ng-model="sale.fact" placeholder="N Factura" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">    
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" placeholder="Vendido a" ng-model="sale.vendido" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" id="ref_text" placeholder="Unidades" ng-model="sale.unidades" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <input type="date" class="form-control" placeholder="fecha" ng-model="sale.fecha" id="fecha" required>
+                                        </div>  
+                                    </div>
+                                    <div class="row">  
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btnCustom text-center">GUARDAR</button>
+                                        </div> 
+                                    </div>  
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                            <!--<button type="button" class="btn btn-secondary btn-lg" ng-click="add();">Agregar</button>-->
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+            <!--/////////////////////////////////// FIN MODAL UPDATE VENTA /////////////////////////////////////////////////////////-->
+
+
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="bodega-tab" data-toggle="tab" href="#bodega" role="tab" aria-controls="bodega" aria-selected="true">Bodega</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="venta-tab" data-toggle="tab" href="#venta" role="tab" aria-controls="venta" aria-selected="false">Ventas</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <!--///////////////////////////////TAB BODEGA////////////////////////////////////////////////////-->   
+                        <div class="tab-pane fade" id="bodega" role="tabpanel" aria-labelledby="bodega-tab">                         
+                            <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn" data-toggle="modal" data-target="#modalBodega">Agregar</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="tableBodega" class="display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Referencia</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Referencia</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            <tr ng-repeat="item in products" id="{{item.id}}">
+                                                <td>{{item.referencia}}</td>
+                                                <td>{{item.cantidad}}</td>       
+                                                <td><button type="button" ng-click="updateProduct('item.id');" class="btn btn-success">Editar</button></td>                                         
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!--///////////////////////////////TAB VENTA/////////////////////////////////////////////////////-->   
+                        <div class="tab-pane fade" id="venta" role="tabpanel" aria-labelledby="venta-tab">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="input-group mb-3">
+                                        <input type="file" class="custom-file-input" id="file">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn" data-toggle="modal" data-target="#modalVenta">Agregar</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label>Fecha inicio</label>
+                                    <input class="form-control" type="date" id="dateInit">
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Fecha Fin</label>
+                                    <input class="form-control" type="date" id="dateEnd">
+                                </div>
+                                <div class="col-sm-2" style="margin-top:2%">
+                                    <button type="button" class="btn" ng-click="getSalesByDate();">Buscar</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="tableVenta" class="display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Referencia</th>
+                                                <th>Factura</th>
+                                                <th>Vendido</th>
+                                                <th>Unidades</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Referencia</th>
+                                                <th>Factura</th>
+                                                <th>Vendido</th>
+                                                <th>Unidades</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            <tr ng-repeat="item in sales" id="{{item.id}}">
+                                                <td>{{referencia}}</td>
+                                                <td>{{factura}}</td>
+                                                <td>{{vendido}}</td>
+                                                <td>{{unidades}}</td>
+                                                <td>{{fecha}}</td>
+                                                <td><button  class="btn btn-success" ng-click="updateSale('item.id');">Editar</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>       
+        <script src="js/request.js"></script>
+        <script src="js/bussines.js"></script> 
+        <script src="js/MainController.js"></script>
+    </body>
+</html>
